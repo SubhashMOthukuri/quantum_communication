@@ -138,9 +138,6 @@ quantum_crypto/
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
@@ -150,7 +147,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email support@quantumsecuremessenger.com or join our Slack channel.
+For support, email subhashmothukuri@gmail.com or join our Slack channel.
 
 ## 🔄 Updates
 
@@ -159,6 +156,3 @@ For support, email support@quantumsecuremessenger.com or join our Slack channel.
 - Version 1.2.0: Enhanced UI/UX
 - Version 1.3.0: Improved security features
 
-## 📚 Documentation
-
-For detailed documentation, visit our [Documentation Page](https://quantumsecuremessenger.com/docs).
