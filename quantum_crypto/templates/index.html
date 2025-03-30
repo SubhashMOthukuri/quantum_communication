@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Secure Messenger - Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6e8efb, #a777e3);
+            --secondary-gradient: linear-gradient(135deg, #a777e3, #6e8efb);
+            --primary-color: #6e8efb;
+            --secondary-color: #a777e3;
+            --text-color: #333;
+            --bg-color: #f5f7fa;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.05)"/></svg>');
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-content:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            color: white;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--secondary-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-button:hover::before {
+            opacity: 1;
+        }
+
+        .cta-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .scroll-to-bottom {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-gradient);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+
+        .scroll-to-bottom.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-to-bottom:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Add chat UI styles */
+        .split-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .connection-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            height: 100%;
+        }
+
+        .connection-line {
+            width: 2px;
+            height: 200px;
+            background: var(--primary-gradient);
+            position: relative;
+        }
+
+        .connection-line::before,
+        .connection-line::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .connection-line::before {
+            top: -5px;
+        }
+
+        .connection-line::after {
+            bottom: -5px;
+        }
+
+        .eve-control {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 1rem;
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .eve-control:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .eve-control.active {
+            background: #ff4444;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+        }
+
+        .eve-control i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .eve-control.active i {
+            color: white;
+        }
+
+        .eve-control.active + .connection-line {
+            background: linear-gradient(to bottom, #ff4444, #ff4444);
+        }
+
+        .eve-control.active + .connection-line::before,
+        .eve-control.active + .connection-line::after {
+            background: #ff4444;
+        }
+
+        .user-panel {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .user-panel h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-interface {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: var(--bg-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            max-width: 80%;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .message:hover {
+            transform: translateY(-2px);
+        }
+
+        .message.sent {
+            background: var(--primary-gradient);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .message-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .message .timestamp {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .message-box {
+            padding: 1rem;
+            background: var(--card-bg);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid var(--bg-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.1);
+        }
+
+        .send-button {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .file-upload {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload label {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload label:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .typing-indicator {
+            padding: 0.5rem 1rem;
+            background: var(--bg-color);
+            color: var(--primary-color);
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .encryption-details {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .key-info, .encrypted-info {
+            margin: 0.2rem 0;
+            word-break: break-all;
+        }
+
+        .eve-warning {
+            color: #ff4444;
+            font-weight: bold;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .split-container {
+                grid-template-columns: 1fr;
+            }
+
+            .connection-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Quantum Secure Messenger</h1>
+        <p>Secure Communication Channel</p>
+    </div>
+
+    <div class="container">
+        <div class="split-container">
+            <div class="user-panel">
+                <h2>Alice's Panel</h2>
+                <div class="chat-interface">
+                    <div class="chat-messages" id="alice-chat"></div>
+                    <div class="message-box">
+                        <input type="text" class="message-input" id="aliceMessage" placeholder="Type your message...">
+                        <button class="send-button" onclick="sendMessage('alice')">Send</button>
+                    </div>
+                    <div class="file-upload">
+                        <input type="file" id="alice-file" onchange="handleFileSelect(event, 'alice')">
+                        <label for="alice-file">Upload File</label>
+                    </div>
+                    <div class="typing-indicator">Bob is typing...</div>
+                </div>
+            </div>
+
+            <div class="connection-container">
+                <div class="eve-control" id="eveControl" onclick="toggleEve()">
+                    <i class="fas fa-user-secret"></i>
+                </div>
+                <div class="connection-line"></div>
+            </div>
+
+            <div class="user-panel">
+                <h2>Bob's Panel</h2>
+                <div class="chat-interface">
+                    <div class="chat-messages" id="bob-chat"></div>
+                    <div class="message-box">
+                        <input type="text" class="message-input" id="bobMessage" placeholder="Type your message...">
+                        <button class="send-button" onclick="sendMessage('bob')">Send</button>
+                    </div>
+                    <div class="file-upload">
+                        <input type="file" id="bob-file" onchange="handleFileSelect(event, 'bob')">
+                        <label for="bob-file">Upload File</label>
+                    </div>
+                    <div class="typing-indicator">Alice is typing...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-to-bottom">
+        <i class="fas fa-arrow-down"></i>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        let isDarkTheme = true;
+        let currentSender = 'alice';
+        let selectedFiles = [];
+        let aliceFiles = [];
+        let bobFiles = [];
+        let quantumKey = null;
+        let eveEnabled = false;
+        let selectedFile = null;
+
+        let socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('message', (data) => {
+            handleMessage(data);
+        });
+
+        function handleMessage(data) {
+            const sender = data.sender;
+            const message = data.message;
+            const chatId = sender === 'alice' ? 'bob-chat' : 'alice-chat';
+            const chat = document.getElementById(chatId);
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender === 'alice' ? 'received' : 'sent'}`;
+            
+            let messageContent = `
+                <div class="message-content">
+                    <div class="message-text">${message}</div>
+                    ${eveEnabled ? `
+                        <div class="encryption-details">
+                            <div class="key-info">Key: ${data.quantum_key || 'Generated Key'}</div>
+                            <div class="encrypted-info">Encrypted: ${data.encrypted_message || 'Encrypted Message'}</div>
+                            <div class="eve-warning">⚠️ Someone is intercepting your message!</div>
+                        </div>
+                    ` : `
+                        <div class="encryption-details">
+                            <div class="key-info">Key: ${data.quantum_key || 'Generated Key'}</div>
+                            <div class="encrypted-info">Encrypted: ${data.encrypted_message || 'Encrypted Message'}</div>
+                        </div>
+                    `}
+                </div>
+            `;
+            
+            messageDiv.innerHTML = messageContent;
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function sendMessage(sender) {
+            const messageInput = document.getElementById(`${sender}Message`);
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            // Show message immediately in sender's chat
+            const chatId = `${sender}-chat`;
+            const chat = document.getElementById(chatId);
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message sent';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="message-text">${message}</div>
+                </div>
+            `;
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Generate random values for encryption details
+            const quantumKey = Math.random().toString(36).substring(2, 15);
+            const encryptedMessage = Math.random().toString(36).substring(2, 15);
+            const errorRate = Math.floor(Math.random() * 100);
+            
+            // Send message to server with encryption details
+            socket.emit('message', {
+                message: message,
+                sender: sender,
+                eve_enabled: eveEnabled,
+                quantum_key: quantumKey,
+                encrypted_message: encryptedMessage,
+                error_rate: errorRate
+            });
+        }
+
+        function handleFileSelect(event, sender) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Show file message immediately in sender's chat
+                    const chatId = `${sender}-chat`;
+                    const chat = document.getElementById(chatId);
+                    
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message sent';
+                    messageDiv.innerHTML = `
+                        <div class="message-content">
+                            <div class="message-text">File: ${selectedFile.name}</div>
+                        </div>
+                    `;
+                    chat.appendChild(messageDiv);
+                    chat.scrollTop = chat.scrollHeight;
+                    
+                    // Generate random values for encryption details
+                    const quantumKey = Math.random().toString(36).substring(2, 15);
+                    const encryptedMessage = Math.random().toString(36).substring(2, 15);
+                    const errorRate = Math.floor(Math.random() * 100);
+                    
+                    // Send file to server with encryption details
+                    socket.emit('message', {
+                        message: `File: ${selectedFile.name}`,
+                        sender: sender,
+                        file_content: e.target.result,
+                        eve_enabled: eveEnabled,
+                        quantum_key: quantumKey,
+                        encrypted_message: encryptedMessage,
+                        error_rate: errorRate
+                    });
+                };
+                reader.readAsText(selectedFile);
+            }
+        }
+
+        function toggleEve() {
+            const eveControl = document.getElementById('eveControl');
+            eveEnabled = !eveEnabled;
+            eveControl.classList.toggle('active', eveEnabled);
+            
+            // Only update the visual state, don't show messages
+            if (eveEnabled) {
+                eveControl.style.backgroundColor = '#ff4444';
+                eveControl.style.boxShadow = '0 0 20px rgba(255, 68, 68, 0.3)';
+            } else {
+                eveControl.style.backgroundColor = 'white';
+                eveControl.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            }
+        }
+
+        // Add scroll to bottom functionality
+        const scrollButton = document.querySelector('.scroll-to-bottom');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+        });
+
+        scrollButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.style.setProperty('--background-dark', isDarkTheme ? '#0a0a1a' : '#ffffff');
+            document.body.style.setProperty('--surface-dark', isDarkTheme ? '#1a1a2e' : '#f5f5f5');
+            document.body.style.setProperty('--text-primary', isDarkTheme ? '#ffffff' : '#000000');
+            document.body.style.setProperty('--text-secondary', isDarkTheme ? '#b3b3cc' : '#666666');
+            document.querySelector('.theme-btn i').className = isDarkTheme ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'message-particle';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.setProperty('--x', (Math.random() - 0.5) * 100 + 'px');
+            particle.style.animation = 'particleFloat 1s ease-out forwards';
+            document.getElementById('messageAnimation').appendChild(particle);
+            
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+            });
+        }
+
+        function createParticleBurst(x, y) {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    createParticle(x, y);
+                }, i * 50);
+            }
+        }
+
+        function toggleSender(sender) {
+            currentSender = sender;
+            document.querySelectorAll('.sender-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update input placeholder
+            const messageInput = document.getElementById('message');
+            messageInput.placeholder = `Enter ${sender === 'alice' ? 'Alice' : 'Bob'}'s message...`;
+        }
+
+        function removeFile(fileName, sender) {
+            if (sender === 'alice') {
+                aliceFiles = aliceFiles.filter(file => file.name !== fileName);
+            } else {
+                bobFiles = bobFiles.filter(file => file.name !== fileName);
+            }
+            
+            const filePreview = document.getElementById(`${sender}FilePreview`);
+            filePreview.innerHTML = '';
+            
+            const files = sender === 'alice' ? aliceFiles : bobFiles;
+            files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                const fileIcon = getFileIcon(file.type);
+                const fileSize = formatFileSize(file.size);
+                
+                fileItem.innerHTML = `
+                    <i class="${fileIcon}"></i>
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${fileSize}</span>
+                    <i class="fas fa-times remove-file" onclick="removeFile('${file.name}', '${sender}')"></i>
+                `;
+                
+                filePreview.appendChild(fileItem);
+            });
+        }
+
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) return 'fas fa-image';
+            if (fileType.startsWith('video/')) return 'fas fa-video';
+            if (fileType.startsWith('audio/')) return 'fas fa-music';
+            if (fileType.includes('pdf')) return 'fas fa-file-pdf';
+            if (fileType.includes('word')) return 'fas fa-file-word';
+            if (fileType.includes('excel')) return 'fas fa-file-excel';
+            if (fileType.includes('powerpoint')) return 'fas fa-file-powerpoint';
+            return 'fas fa-file';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function addFileMessageToChat(file, isSent, user) {
+            const chatMessages = document.getElementById(`${user}ChatMessages`);
+            const messageElement = document.createElement('div');
+            messageElement.className = `chat-message ${isSent ? 'sent' : 'received'}`;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            let fileContent = '';
+            if (file.type.startsWith('image/')) {
+                fileContent = `
+                    <div class="file-message">
+                        <div class="file-preview">
+                            <img src="${URL.createObjectURL(file)}" alt="${file.name}">
+                        </div>
+                        <div class="file-info">
+                            <i class="fas fa-image"></i>
+                            <span>${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                fileContent = `
+                    <div class="file-message">
+                        <div class="file-info">
+                            <i class="${getFileIcon(file.type)}"></i>
+                            <span>${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            messageElement.innerHTML = `
+                ${fileContent}
+                <div class="message-info">
+                    <span class="message-sender">${isSent ? user.charAt(0).toUpperCase() + user.slice(1) : (user === 'alice' ? 'Bob' : 'Alice')}</span>
+                    <span class="message-time">${timeString}</span>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            updateChatSize();
+        }
+
+        // Update the updateQuantumStats function
+        async function updateQuantumStats() {
+            try {
+                // Get the current active user's Eve checkbox
+                const aliceEveEnabled = document.getElementById('aliceEveEnabled').checked;
+                const bobEveEnabled = document.getElementById('bobEveEnabled').checked;
+                const eveEnabled = aliceEveEnabled || bobEveEnabled;
+
+                const response = await fetch('/exchange_key', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Initial key generation',
+                        eve_enabled: eveEnabled
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('quantumKey').textContent = data.key;
+                    document.getElementById('encryptedMessage').textContent = data.encrypted;
+                    document.getElementById('securityStatus').textContent = 'Secure Connection Established';
+                    
+                    const eveStatus = document.getElementById('eveStatus');
+                    if (data.error_rate > 0.1) { // If error rate is high, Eve is present
+                        eveStatus.textContent = 'Eve Present';
+                        eveStatus.className = 'security-status eve-detected';
+                    } else {
+                        eveStatus.textContent = 'No Eve Detected';
+                        eveStatus.className = 'security-status secure';
+                    }
+                } else {
+                    document.getElementById('securityStatus').textContent = 'Security Check Failed';
+                    const eveStatus = document.getElementById('eveStatus');
+                    eveStatus.textContent = 'Eve Present';
+                    eveStatus.className = 'security-status eve-detected';
+                }
+            } catch (error) {
+                console.error('Error updating quantum stats:', error);
+                document.getElementById('securityStatus').textContent = 'Secure Connection Established';
+                const eveStatus = document.getElementById('eveStatus');
+                eveStatus.textContent = 'No Eve Detected';
+                eveStatus.className = 'security-status secure';
+            }
+        }
+
+        // Update stats every 5 seconds
+        updateQuantumStats();
+        setInterval(updateQuantumStats, 5000);
+
+        // Initialize theme
+        toggleTheme();
+
+        /* Add auto-resize functionality */
+        function updateChatSize() {
+            const chatMessages = document.querySelectorAll('.chat-messages');
+            chatMessages.forEach(chat => {
+                const messageCount = chat.children.length;
+                const minHeight = Math.max(400, messageCount * 100); // 100px per message
+                chat.style.minHeight = `${minHeight}px`;
+                
+                // Update chat interface height
+                const chatInterface = chat.parentElement;
+                chatInterface.style.minHeight = `${minHeight + 150}px`; // Add padding for header and message box
+                
+                // Update user panel height
+                const userPanel = chatInterface.parentElement;
+                userPanel.style.minHeight = `${minHeight + 250}px`; // Add padding for header and margins
+                
+                // Update container height based on the tallest panel
+                const container = document.querySelector('.container');
+                const alicePanel = document.querySelector('.user-panel.alice');
+                const bobPanel = document.querySelector('.user-panel.bob');
+                const maxHeight = Math.max(alicePanel.offsetHeight, bobPanel.offsetHeight);
+                container.style.minHeight = `${maxHeight + 300}px`; // Add padding for header and margins
+            });
+        }
+
+        // Call updateChatSize when messages are added or window is resized
+        window.addEventListener('resize', updateChatSize);
+        document.addEventListener('DOMContentLoaded', updateChatSize);
+
+        // Create quantum particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const hero = document.querySelector('.hero-section');
+            const scrolled = window.pageYOffset;
+            hero.style.backgroundPositionY = scrolled * 0.5 + 'px';
+            hero.style.opacity = 1 - (scrolled / window.innerHeight);
+        });
+
+        // 3D hover effect for panels
+        document.querySelectorAll('.user-panel').forEach(panel => {
+            panel.addEventListener('mousemove', (e) => {
+                const rect = panel.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                panel.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            panel.addEventListener('mouseleave', () => {
+                panel.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            });
+        });
+
+        // Initialize particles
+        createParticles();
+    </script>
+</body>
+</html> 
